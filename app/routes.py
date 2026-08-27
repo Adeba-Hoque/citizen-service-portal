@@ -9,11 +9,28 @@ from flask import (
     flash
 )
 
-from app import db
-from app.models import ServiceRequest
+from flask_login import (
+    login_user,
+    logout_user,
+    login_required,
+    current_user
+)
+
+from werkzeug.security import (
+    generate_password_hash,
+    check_password_hash
+)
+
+from app import db, login_manager
+from app.models import ServiceRequest, Admin
 
 
 main = Blueprint("main", __name__)
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return db.session.get(Admin, int(user_id))
 
 
 def generate_reference():
@@ -23,10 +40,7 @@ def generate_reference():
         ServiceRequest.id.desc()
     ).first()
 
-    if latest_request:
-        next_number = latest_request.id + 1
-    else:
-        next_number = 1
+    next_number = latest_request.id + 1 if latest_request else 1
 
     return f"CSR-{year}-{next_number:04d}"
 
@@ -92,3 +106,137 @@ def track_request():
         "track_request.html",
         service_request=service_request
     )
+
+
+@main.route("/admin/login", methods=["GET", "POST"])
+def admin_login():
+    if current_user.is_authenticated:
+        return redirect(url_for("main.admin_dashboard"))
+
+    if request.method == "POST":
+
+        username = request.form.get("username")
+        password = request.form.get("password")
+
+        admin = Admin.query.filter_by(
+            username=username
+        ).first()
+
+        if admin and check_password_hash(
+            admin.password_hash,
+            password
+        ):
+            login_user(admin)
+            return redirect(url_for("main.admin_dashboard"))
+
+        flash("Invalid administrator username or password.")
+
+    return render_template("admin_login.html")
+
+
+@main.route("/admin/logout")
+@login_required
+def admin_logout():
+    logout_user()
+
+    return redirect(url_for("main.admin_login"))
+
+
+@main.route("/admin")
+@login_required
+def admin_dashboard():
+
+    requests = ServiceRequest.query.order_by(
+        ServiceRequest.created_at.desc()
+    ).all()
+
+    total_requests = len(requests)
+
+    submitted = sum(
+        1 for item in requests
+        if item.status == "Submitted"
+    )
+
+    under_review = sum(
+        1 for item in requests
+        if item.status == "Under Review"
+    )
+
+    in_progress = sum(
+        1 for item in requests
+        if item.status == "In Progress"
+    )
+
+    resolved = sum(
+        1 for item in requests
+        if item.status == "Resolved"
+    )
+
+    return render_template(
+        "admin_dashboard.html",
+        requests=requests,
+        total_requests=total_requests,
+        submitted=submitted,
+        under_review=under_review,
+        in_progress=in_progress,
+        resolved=resolved
+    )
+
+
+@main.route(
+    "/admin/request/<int:request_id>/update",
+    methods=["GET", "POST"]
+)
+@login_required
+def update_request(request_id):
+
+    service_request = ServiceRequest.query.get_or_404(
+        request_id
+    )
+
+    if request.method == "POST":
+
+        service_request.priority = request.form.get(
+            "priority"
+        )
+
+        service_request.status = request.form.get(
+            "status"
+        )
+
+        service_request.updated_at = datetime.utcnow()
+
+        db.session.commit()
+
+        flash("Service request updated successfully.")
+
+        return redirect(
+            url_for("main.admin_dashboard")
+        )
+
+    return render_template(
+        "admin_update_request.html",
+        service_request=service_request
+    )
+
+
+@main.route("/admin/setup")
+def setup_admin():
+    existing_admin = Admin.query.filter_by(
+        username="admin"
+    ).first()
+
+    if existing_admin:
+        return "Administrator account already exists."
+
+    admin = Admin(
+        username="admin",
+        password_hash=generate_password_hash(
+            "Admin@123"
+        )
+    )
+
+    db.session.add(admin)
+    db.session.commit()
+
+    return "Administrator account created."

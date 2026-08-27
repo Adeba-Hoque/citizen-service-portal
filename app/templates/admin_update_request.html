@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Request{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+
+    <div class="col-lg-8">
+
+        <div class="mb-4">
+
+            <h2 class="fw-bold">
+                Manage Service Request
+            </h2>
+
+            <p class="text-muted">
+                {{ service_request.reference }}
+            </p>
+
+        </div>
+
+        <div class="card shadow-sm border-0">
+
+            <div class="card-body p-5">
+
+                <div class="mb-4">
+
+                    <h5>
+                        {{ service_request.category }}
+                    </h5>
+
+                    <p class="text-muted">
+                        {{ service_request.description }}
+                    </p>
+
+                    <p>
+                        <strong>Citizen:</strong>
+                        {{ service_request.citizen_name }}
+                    </p>
+
+                    <p>
+                        <strong>Email:</strong>
+                        {{ service_request.email }}
+                    </p>
+
+                </div>
+
+                <form method="POST">
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Priority
+                        </label>
+
+                        <select
+                            name="priority"
+                            class="form-select"
+                        >
+
+                            <option
+                                value="Low"
+                                {% if service_request.priority == "Low" %}
+                                selected
+                                {% endif %}
+                            >
+                                Low
+                            </option>
+
+                            <option
+                                value="Medium"
+                                {% if service_request.priority == "Medium" %}
+                                selected
+                                {% endif %}
+                            >
+                                Medium
+                            </option>
+
+                            <option
+                                value="High"
+                                {% if service_request.priority == "High" %}
+                                selected
+                                {% endif %}
+                            >
+                                High
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="mb-4">
+
+                        <label class="form-label">
+                            Status
+                        </label>
+
+                        <select
+                            name="status"
+                            class="form-select"
+                        >
+
+                            <option
+                                value="Submitted"
+                                {% if service_request.status == "Submitted" %}
+                                selected
+                                {% endif %}
+                            >
+                                Submitted
+                            </option>
+
+                            <option
+                                value="Under Review"
+                                {% if service_request.status == "Under Review" %}
+                                selected
+                                {% endif %}
+                            >
+                                Under Review
+                            </option>
+
+                            <option
+                                value="In Progress"
+                                {% if service_request.status == "In Progress" %}
+                                selected
+                                {% endif %}
+                            >
+                                In Progress
+                            </option>
+
+                            <option
+                                value="Resolved"
+                                {% if service_request.status == "Resolved" %}
+                                selected
+                                {% endif %}
+                            >
+                                Resolved
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+
+                        <a
+                            href="{{ url_for(
+                                'main.admin_dashboard'
+                            ) }}"
+                            class="btn btn-outline-secondary"
+                        >
+                            Back
+                        </a>
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary"
+                        >
+                            Update Request
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
