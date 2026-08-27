@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}Track Request{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+
+    <div class="col-lg-8">
+
+        <div class="card shadow-sm border-0 mb-4">
+
+            <div class="card-body p-4">
+
+                <h2 class="fw-bold mb-3">
+                    Track Service Request
+                </h2>
+
+                <form method="POST">
+
+                    <div class="input-group">
+
+                        <input
+                            type="text"
+                            name="reference"
+                            class="form-control form-control-lg"
+                            placeholder="Example: CSR-2026-0001"
+                            required
+                        >
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary"
+                        >
+                            Track
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+        {% if service_request %}
+
+        <div class="card shadow-sm border-0">
+
+            <div class="card-body p-4">
+
+                <h4 class="mb-4">
+                    Request Details
+                </h4>
+
+                <table class="table">
+
+                    <tr>
+                        <th>Reference</th>
+                        <td>{{ service_request.reference }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Category</th>
+                        <td>{{ service_request.category }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Priority</th>
+                        <td>{{ service_request.priority }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Status</th>
+                        <td>
+                            <span class="badge bg-primary">
+                                {{ service_request.status }}
+                            </span>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Description</th>
+                        <td>
+                            {{ service_request.description }}
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Submitted</th>
+                        <td>
+                            {{ service_request.created_at.strftime(
+                                '%d-%m-%Y %H:%M'
+                            ) }}
+                        </td>
+                    </tr>
+
+                </table>
+
+            </div>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

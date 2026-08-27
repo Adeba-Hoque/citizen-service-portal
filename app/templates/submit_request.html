@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+
+{% block title %}Submit Request{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+
+    <div class="col-lg-8">
+
+        <div class="card shadow-sm border-0">
+
+            <div class="card-body p-5">
+
+                <h2 class="fw-bold mb-2">
+                    Submit Service Request
+                </h2>
+
+                <p class="text-muted mb-4">
+                    Complete the form below to submit
+                    a citizen service request.
+                </p>
+
+                <form method="POST">
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Full Name
+                        </label>
+
+                        <input
+                            type="text"
+                            name="citizen_name"
+                            class="form-control"
+                            required
+                        >
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Email Address
+                        </label>
+
+                        <input
+                            type="email"
+                            name="email"
+                            class="form-control"
+                            required
+                        >
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Request Category
+                        </label>
+
+                        <select
+                            name="category"
+                            class="form-select"
+                            required
+                        >
+                            <option value="">
+                                Select category
+                            </option>
+
+                            <option value="Road Maintenance">
+                                Road Maintenance
+                            </option>
+
+                            <option value="Street Lighting">
+                                Street Lighting
+                            </option>
+
+                            <option value="Waste Collection">
+                                Waste Collection
+                            </option>
+
+                            <option value="Public Facilities">
+                                Public Facilities
+                            </option>
+
+                            <option value="General Enquiry">
+                                General Enquiry
+                            </option>
+                        </select>
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Priority
+                        </label>
+
+                        <select
+                            name="priority"
+                            class="form-select"
+                        >
+                            <option value="Low">
+                                Low
+                            </option>
+
+                            <option value="Medium" selected>
+                                Medium
+                            </option>
+
+                            <option value="High">
+                                High
+                            </option>
+                        </select>
+
+                    </div>
+
+                    <div class="mb-4">
+
+                        <label class="form-label">
+                            Description
+                        </label>
+
+                        <textarea
+                            name="description"
+                            rows="5"
+                            class="form-control"
+                            placeholder="Describe the issue..."
+                            required
+                        ></textarea>
+
+                    </div>
+
+                    <div class="d-grid">
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary btn-lg"
+                        >
+                            Submit Request
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

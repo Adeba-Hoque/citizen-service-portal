@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+
+    <div class="col-lg-9">
+
+        <div class="text-center mb-5">
+
+            <h1 class="fw-bold mb-3">
+                Citizen Service Request Portal
+            </h1>
+
+            <p class="lead text-muted">
+                Submit and track public service requests
+                through a simple digital portal.
+            </p>
+
+        </div>
+
+        <div class="row g-4">
+
+            <div class="col-md-6">
+
+                <div class="card shadow-sm border-0 h-100">
+
+                    <div class="card-body p-4 text-center">
+
+                        <h4>Submit a Request</h4>
+
+                        <p class="text-muted">
+                            Report an issue or request assistance
+                            from a public service department.
+                        </p>
+
+                        <a
+                            href="{{ url_for('main.submit_request') }}"
+                            class="btn btn-primary"
+                        >
+                            Submit Request
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-md-6">
+
+                <div class="card shadow-sm border-0 h-100">
+
+                    <div class="card-body p-4 text-center">
+
+                        <h4>Track Existing Request</h4>
+
+                        <p class="text-muted">
+                            Enter your reference number to check
+                            the current request status.
+                        </p>
+
+                        <a
+                            href="{{ url_for('main.track_request') }}"
+                            class="btn btn-outline-primary"
+                        >
+                            Track Request
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
