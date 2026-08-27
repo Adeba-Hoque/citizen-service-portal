@@ -22,7 +22,7 @@ from werkzeug.security import (
 )
 
 from app import db, login_manager
-from app.models import ServiceRequest, Admin
+from app.models import ServiceRequest, Admin, AuditLog
 
 
 main = Blueprint("main", __name__)
@@ -182,6 +182,19 @@ def admin_dashboard():
         resolved=resolved
     )
 
+@main.route("/admin/audit-logs")
+@login_required
+def audit_logs():
+
+    logs = AuditLog.query.order_by(
+        AuditLog.created_at.desc()
+    ).all()
+
+    return render_template(
+        "audit_logs.html",
+        logs=logs
+    )
+
 
 @main.route(
     "/admin/request/<int:request_id>/update",
@@ -196,15 +209,39 @@ def update_request(request_id):
 
     if request.method == "POST":
 
-        service_request.priority = request.form.get(
-            "priority"
-        )
+        old_priority = service_request.priority
+        old_status = service_request.status
 
-        service_request.status = request.form.get(
-            "status"
-        )
+        new_priority = request.form.get("priority")
+        new_status = request.form.get("status")
 
+        service_request.priority = new_priority
+        service_request.status = new_status
         service_request.updated_at = datetime.utcnow()
+
+        if old_priority != new_priority:
+
+            priority_log = AuditLog(
+                admin_username=current_user.username,
+                request_reference=service_request.reference,
+                action="Priority Updated",
+                old_value=old_priority,
+                new_value=new_priority
+            )
+
+            db.session.add(priority_log)
+
+        if old_status != new_status:
+
+            status_log = AuditLog(
+                admin_username=current_user.username,
+                request_reference=service_request.reference,
+                action="Status Updated",
+                old_value=old_status,
+                new_value=new_status
+            )
+
+            db.session.add(status_log)
 
         db.session.commit()
 
@@ -220,23 +257,3 @@ def update_request(request_id):
     )
 
 
-@main.route("/admin/setup")
-def setup_admin():
-    existing_admin = Admin.query.filter_by(
-        username="admin"
-    ).first()
-
-    if existing_admin:
-        return "Administrator account already exists."
-
-    admin = Admin(
-        username="admin",
-        password_hash=generate_password_hash(
-            "Admin@123"
-        )
-    )
-
-    db.session.add(admin)
-    db.session.commit()
-
-    return "Administrator account created."

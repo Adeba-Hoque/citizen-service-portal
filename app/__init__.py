@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
+from werkzeug.security import generate_password_hash
 
 db = SQLAlchemy()
 login_manager = LoginManager()
@@ -23,5 +24,22 @@ def create_app():
 
     with app.app_context():
         db.create_all()
+
+        from app.models import Admin
+
+        existing_admin = Admin.query.filter_by(
+            username="admin"
+        ).first()
+
+        if not existing_admin:
+            admin = Admin(
+                username="admin",
+                password_hash=generate_password_hash(
+                    "Admin@123"
+                )
+            )
+
+            db.session.add(admin)
+            db.session.commit()
 
     return app

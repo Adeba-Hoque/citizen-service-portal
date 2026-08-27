@@ -75,3 +75,39 @@ class ServiceRequest(db.Model):
 
     def __repr__(self):
         return f"<ServiceRequest {self.reference}>"
+
+class AuditLog(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+
+    admin_username = db.Column(
+        db.String(80),
+        nullable=False
+    )
+
+    request_reference = db.Column(
+        db.String(30),
+        nullable=False
+    )
+
+    action = db.Column(
+        db.String(100),
+        nullable=False
+    )
+
+    old_value = db.Column(
+        db.String(150),
+        nullable=True
+    )
+
+    new_value = db.Column(
+        db.String(150),
+        nullable=True
+    )
+
+    created_at = db.Column(
+        db.DateTime,
+        default=datetime.utcnow
+    )
+
+    def __repr__(self):
+        return f"<AuditLog {self.action}>"
