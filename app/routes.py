@@ -257,3 +257,9 @@ def update_request(request_id):
     )
 
 
+@main.route("/health")
+def health():
+    return {
+        "status": "healthy",
+        "service": "citizen-service-portal"
+    }, 200
